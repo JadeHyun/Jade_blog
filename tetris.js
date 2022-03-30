@@ -1,20 +1,17 @@
-// 테트리스 만들기
-// playground 태그 안 ul 태그 안에 20 줄의 li 가 들어갈 것이고,
-// 20 개의 li 안에 ul태그에 10 개의 li 가 들어갈 것이다. 
-// ( 세로 20 칸 가로 10 칸 의 테이블이 구성 될 예정. )
 
 // DOM
 const playground = document.querySelector(".playground > ul");
+const gameText = document.querySelector(".game-text");
+const scoreDisplay = document.querySelector(".score")
+const restartButton = document.querySelector(".game-text > button")
+
 
 // Setting 
 const GAME_ROWS = 20;
 const GAME_COLS = 10; 
 
-
-
-
 // variables
-let socre = 0;
+let score = 0;
 let duration = 500;
 let downInterval;
 let tempMovingItem;
@@ -60,10 +57,10 @@ const BLOCKS = {
 };
 
 const movingItem = {
-    type: 'tree',
+    type: "tree" ,
     direction: 0,
     top: 0,
-    left: 3,
+    left: 3
 };
 
 
@@ -82,8 +79,6 @@ function init(){
     renderBlocks();
 }
 
-
-
 function prependNewLine(){
     const li = document.createElement('li'); // li 라는 변수에  li 태그를 만듬.
     const ul = document.createElement('ul'); // ul 이라는 변수에 ul 태그를 만듬.
@@ -95,6 +90,7 @@ function prependNewLine(){
     li.prepend(ul) // 변수명 li(세로 20칸) > ul > matrx(li 가로 10칸)
     playground.prepend(li)
 }
+
 function renderBlocks(moveType =""){
     const { type, direction, top, left } = tempMovingItem; 
     const movingBlocks = document.querySelectorAll(".moving");
@@ -106,7 +102,7 @@ function renderBlocks(moveType =""){
     // 현재 BLOCKS 의 type 은 잘 찍히나, direction 이 안찍힘 => 이 말은 새로운 블록이 생성되지 않음. 
     //  현재 이 전 코드는 some() 이 아닌 forEach 문으로 했을 때 정상적으로 새 블록이 나온것을 확인 할 수 있음. 
     //      따라서 일단은 BLOCKS 의 some 을 일단 1. forEach 문으로 변경 2. some() 함수를 사용할 때 왜 direction 이 undefind 가 나오는지 알아볼것. 
-    BLOCKS [type] [direction].some(block => {
+    BLOCKS [type][direction].some(block => {
         const x = block[0] + left;
         const y = block[1] + top;
 
@@ -123,8 +119,12 @@ function renderBlocks(moveType =""){
             target.classList.add(type, 'moving')
         } else {
             tempMovingItem = { ...movingItem }
+            if(moveType === 'retry'){
+                clearInterval(downInterval);
+                showGameoverText()
+            }
             setTimeout(() => {
-                renderBlocks();
+                renderBlocks('retry');
                 if(moveType === 'top') {
                     seizeBlock();
                 }
@@ -146,25 +146,43 @@ function renderBlocks(moveType =""){
             moving.classList.remove('moving');
             moving.classList.add('seized');
         })
+        checkMatch()
+    };
+
+    function checkMatch(){
+        const childNodes = playground.childNodes; 
+        childNodes.forEach(child =>{
+            let matched = true;
+            child.children[0].childNodes.forEach(li=>{
+                if(!li.classList.contains('seized')){
+                    matched = false ;
+                }
+            })
+            if(matched){
+                child.remove();
+                prependNewLine()
+                score++;
+                scoreDisplay.innerText = score ;
+            }
+        })
         generateNewBlock()
     }
 
 
-    function generateNewBlock() {
-        clearInterval(downInterval); // interval 시간을 초기화 해주는 코드
+
+    function generateNewBlock() {    
+        clearInterval(downInterval); 
         downInterval = setInterval(() => {
             moveBlock('top',1)
-        }, duration)
-    // 위 코드는 시간이 지날수록 블록이 내려 올 수 있도록 하는 코드이다. 
-    
-
+        }, duration);
+    // clearInterval => 
         const blockArray = Object.entries(BLOCKS);
         const randomIndex = Math.floor(Math.random() * blockArray.length);
-
     // 버그 원인 발견. movingItem.type 지정이 안되는듯. 빈칸으로 두니 새로운게 생성이 안됨.
     // 해결 : movingItem.type 을 빈칸으로 줫었는데 그렇게 되면 BLOCKS 함수에서 direction 이 속성을 못찾는 이슈가 있었음. 
     // 처음 접했을 때 랜덤함수 이상인줄 알고 찾아봤으나 이상없음. movingItem 의 type 을 지정안해주니 다음 블록을 호출을 못한다는것을 찾음.
     // movingItem 의 타입을 blockArray 함수의 배열의 반복문(Object.entries) 값으로 randomIndex 를 주고, 배열의 0 번째인 블록의 타입을 랜덤으로 불러옴.
+
         movingItem.type = blockArray[randomIndex][0];
         movingItem.top = 0;
         movingItem.left = 3;
@@ -181,9 +199,8 @@ function renderBlocks(moveType =""){
             return false;
         }   
         return true;
-            // checkEmpty 라는 함수를 만들었다. 
-        // 한번더 체크하는 이유는 : 빈 여백을 채크해서 밖으로 벗어나지 않도록 하기 위함. 블럭이 최하단으로 떨어졌을 때 또 다른 블럭이 생성되고  블럭이 그 위에 떨어졌을 때 그 밑에 블럭이 있는지 없는지를 또 체크해야 한다. 그래서 한번 더 체크 해야한다. 
-
+        // checkEmpty 라는 함수를 만들었다. 
+        // 한번더 체크하는 이유는 : 빈 여백을 채크해서 밖으로 벗어나지 않도록 하기 위함. 블럭이 최하단으로 떨어졌을 때 또 다른 블럭이 생성되고  블럭이 그 위에 떨어졌을 때 그 밑에 블럭이 있는지 없는지를 또 체크해야 한다.
     }
 
 }
@@ -200,6 +217,18 @@ function renderBlocks(moveType =""){
         renderBlocks();
     }
 
+    function dropBlock(){
+        clearInterval(downInterval);
+        downInterval = setInterval(() => {
+            moveBlock('top',1)
+        },10)
+    }
+
+    function showGameoverText(){
+            gameText.style.display = 'flex'
+    }
+
+
     //event handling
     document.addEventListener('keydown', e =>{
         switch(e.keyCode){
@@ -215,10 +244,17 @@ function renderBlocks(moveType =""){
             case 38:
                 changeDireaction();
                 break;
+            case 32:
+                dropBlock();
+                break;
         default:
             break;
         }
     });
 
-
+restartButton.addEventListener("click",()=>{
+    playground.innerHTML = "";
+    gameText.style.display = 'none'
+    init()
+})
      // https://youtu.be/1lNy2mhvLFk?t=1960

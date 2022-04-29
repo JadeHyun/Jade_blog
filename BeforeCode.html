@@ -1,0 +1,128 @@
+<html>
+<head>
+    <style>
+        article{
+            background-color: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+    <article>hello</article>
+    <script>
+        function findTheBug(word) {
+            // TODO: 여기에 코드를 작성합니다. 
+            for (i = 0; i < word.length; i++) {
+                if (word[i] === '#') {
+                    return i
+                }
+            }
+        }
+        /* ----------------------------------------------------------------------------------------------- */
+
+        function sumTo(num) {
+            // TODO: 여기에 코드를 작성합니다.
+            let value = 0;
+            for (i = 0; i <= num; i++) { //num까지 더하기
+                value = value + i
+            }
+            return value
+        }
+
+        /* ----------------------------------------------------------------------------------------------- */
+
+
+        function isOdd(num) {
+            // TODO: 여기에 코드를 작성합니다.
+            let i = 0
+            let val = 0
+
+            /* num =10
+            28 => 10-i*2 => 2
+             num = 9
+            28 => 9- */
+
+            while (Math.abs(num) - i * 2 >= 1) {
+                val = Math.abs(num) - i * 2
+                i = i + 1
+            }
+            if (val === 1) {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        // 생각하지 못하는 문제(이해못하는?)는 바로 while 문에서 조건으로 지정하는 Math.abs(num)-i*2 >= 1 이 부분이다
+        // 코드를 보면 결과를 예측 할 수 있지만 짜라고 한다면 이해가 덜 되어 못할것 같다...
+
+        /* ----------------------------------------------------------------------------------------------- */
+
+        function factorial(num) {
+            // TODO: 여기에 코드를 작성합니다.
+            let val = 1
+            for (i = 1; i <= num; i++) {
+                val = val * i
+            }
+            return val
+        }
+
+        /* ----------------------------------------------------------------------------------------------- */
+
+        function repeatString(str, num) {
+            // TODO: 여기에 코드를 작성합니다.
+            let val = '';
+            for (i = 0; i < num; i++) {
+                val = val + str
+            }
+            return val
+        }
+
+        /* ----------------------------------------------------------------------------------------------- */
+
+        function makeDigits(num) {
+            // TODO: 여기에 코드를 작성합니다.
+            let val = '';
+            for (i = 1; i <= num; i++) {
+                val = val + i
+            }
+            return val
+        }
+
+        /* ----------------------------------------------------------------------------------------------- */
+
+        function makeDigits2(num) {
+            // TODO: 여기에 코드를 작성합니다.
+            let val = '1';
+            let i = 1;
+            while (i < num) {
+                val = val + '-' + (i + 1)
+                i++
+            }
+            return val
+        }
+
+        /* ----------------------------------------------------------------------------------------------- */
+
+        function makeOddDigits(num) {
+            // TODO: 여기에 코드를 작성합니다.
+            let val = '';
+            let i = 1;
+            while (i <= num * 2) {
+                if (i % 2 === 1) {
+                    val = val + i
+                }
+                i = i + 1
+            }
+            return val;
+        }
+
+  // for문이 일을 시작해서 num 값을 쭉 찾아주고,
+  // num 의 값을 if문으로 홀수만 뽑아내주고 뽑아낸 값을 변수에 담아서
+  // 변수를 출력 
+
+        /* ----------------------------------------------------------------------------------------------- */
+
+    </script>
+</body>
+
+</html>
